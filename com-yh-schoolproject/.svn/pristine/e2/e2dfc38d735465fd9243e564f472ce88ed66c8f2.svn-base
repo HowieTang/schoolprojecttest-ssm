@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.teacher.CclassMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseResultMap" type="com.yh.model.teacher.CclassModel" >
+	<result column="class_id" property="classId"/>
+	<result column="grade" property="grade"/>
+	<result column="cclass" property="cclass"/>
+	<!-- <result column="sname" property="sname"/> -->
+	<result column="flag_del" property="flagDel"/>
+	<result column="state" property="state"/>
+	<!-- <result column="sname" property="sname"/>
+	<result column="tname" property="tname"/> -->
+</resultMap> 
+     
+<sql id="Base_Cclass_List" >
+`class_id`, `grade`, `cclass`,<!--  `sname` ,-->`flag_del`, `state`<!--  `sname`, `tname` -->
+</sql>
+   
+<!-- 根据id查询楼层-->
+<select id="queryCclassList" resultMap="BaseResultMap" >
+	select 
+	<include refid="Base_Cclass_List"/>
+	from tb_cclass
+	<where> flag_del = 0 
+ 	<!-- select * from class_student
+	where flag_del = 0  -->
+	 	<!-- <if test="cclass.sname != null and cclass.sname != ''">
+	  		and sname like concat(concat('%',#{cclass.sname}),'%')
+		</if>  -->
+	    <if test="cclass.grade != null and cclass.grade !=''">
+	        AND grade=#{cclass.grade}
+	    </if>
+	    <if test="cclass.cclass != null and cclass.cclass != ''">
+	        and cclass like concat(concat('%',#{cclass.cclass}),'%')
+	    </if>
+	       limit #{page.pageIndex},#{page.pageSize}
+	</where> 
+</select>
+ 
+ <select id="queryCourseDataCount" resultType="java.lang.Integer" >
+ 	select 
+ 	count(*) as dataCount 
+ 	from tb_cclass
+ 	<where> flag_del = 0
+	    <if test="grade != null and grade !=''">
+	      AND grade=#{grade}
+	    </if>
+	    <if test="cclass != null and cclass != ''">
+	      and cclass like  concat(concat('%',#{cclass}),'%')
+	    </if>
+	   </where>  
+</select>
+
+<!-- 根据ID查询公告列表-->
+<select id="queryCclassById" resultMap="BaseResultMap">
+	select 
+	 <include refid="Base_Cclass_List"/> 
+	 from tb_cclass where class_id = #{0}
+</select>
+<!-- 根据id删除 -->
+<update id="deleteCclassById">
+	update tb_cclass set flag_del=1 where class_id=#{classId}
+</update>
+<!-- 添加 -->
+<insert id="addCclass">
+	insert into tb_cclass(class_id,grade,cclass,flag_del,state<!--, sname,tname -->)
+	values(#{classId},#{grade},#{cclass},#{flagDel},#{state}<!-- ,#{sname},#{tname} -->)
+</insert>
+<!-- 修改-->
+<update id="updataCclass">
+update tb_cclass
+	<trim prefix="SET" suffixOverrides=",">
+	
+		<if test="classId !=null and classId !=''">
+			class_id = #{classId},
+		</if>
+		<if test="grade !=null and grade !=''">
+			grade = #{grade},
+		</if>
+		<if test="cclass !=null and cclass !=''">
+			cclass = #{cclass},
+		</if>
+		<!-- <if test="sname !=null and sname !=''">
+			sname = #{sname},
+		</if>
+		<if test="tname !=null and tname !=''">
+			tname = #{tname},
+		</if> -->
+	</trim>
+where class_id=#{classId}
+</update>
+
+<!-- 学生绑定班级-->
+<!-- 成绩绑定班级-->
+<select id="queryList" resultMap="BaseResultMap" >
+	select
+	<include refid="Base_Cclass_List"/>
+	from tb_cclass
+	where flag_del = 0
+</select>
+
+<!-- 班级添加教师 -->
+<insert id="classBindTeacher">
+insert into tb_teacher_class(class_teacher_id,class_id,teacher_id) 
+values(#{id},#{cclassId},#{tid});
+</insert>
+
+<!-- 班级添加学生 -->
+<insert id="classBindStudent">
+insert into tb_student_class(stu_class_id,student_id,class_id) 
+values(#{id},#{sid},#{cclassId});
+</insert>
+</mapper>   

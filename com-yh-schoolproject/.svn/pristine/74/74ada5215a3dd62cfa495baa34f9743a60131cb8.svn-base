@@ -1,0 +1,25 @@
+package com.yh.ws.service.impl.teacher;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.yh.api.service.teacher.TeacherJournalService;
+import com.yh.model.teacher.TeacherJournalModel;
+import com.yh.ws.mapper.teacher.TeacherJournalMapper;
+
+@Service("teacherJournalService")
+public class TeacherJournalServiceImpl implements TeacherJournalService {
+
+	@Autowired
+	private TeacherJournalMapper teacherJournalMapper;
+
+	/**教师日志查询列表接口实现*/
+	@Override
+	public List<TeacherJournalModel> queryteacherJournalList() {
+		List<TeacherJournalModel> teacherJournal = teacherJournalMapper.queryteacherJournalList();
+		
+		return teacherJournal;
+	}
+}

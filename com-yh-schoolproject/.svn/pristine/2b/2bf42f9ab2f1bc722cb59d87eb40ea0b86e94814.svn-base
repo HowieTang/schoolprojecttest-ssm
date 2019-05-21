@@ -1,0 +1,31 @@
+package com.yh.ws.mapper;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.yh.model.student.StudentLeaveModel;
+import com.yh.model.sys.AccountModel;
+
+
+/**
+ * 学生增删改查接口
+ * */
+@Repository
+public interface StudentLeaveMapper {
+
+	        //查询学生请假列表
+			public List<StudentLeaveModel> queryStuLeaveList(Map<String, Object> map);
+			//学生请假列表分页
+			public Integer queryDataCount(StudentLeaveModel stuLeave);
+			//学生请假添加接口
+			public void save(StudentLeaveModel stuLeave);
+			//学生请假修改接口
+			public  void update(StudentLeaveModel stuLeave);
+            //学生请假关联老师接口方法
+			public void stuLeaveBindteacher(Map<String, String> map);
+            //查询学生请假表ID
+			public StudentLeaveModel queryStuLeaveById(String sleaveId);
+			
+}

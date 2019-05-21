@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.teacher.TeacherJournalMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseResultMap" type="com.yh.model.teacher.TeacherJournalModel" >
+	<result column="journal_id"    property="journalId"/>
+	<result column="title"  property="title"/>
+	<result column="content" property="content"/>
+	<result column="start_time" property="startTime"/>
+	<result column="update_time" property="updateTime"/>
+	<result column="end_time" property="endTime"/>
+	<result column="flag_del" property="flagDel"/>
+	<result column="state" property="state"/>   
+</resultMap>
+
+<sql id="Base_Column_List" >
+ 	`journal_id`, `title`, `content`, `start_time`, `end_time`，`update_time`, `flag_del`, `state`
+</sql>
+
+<!-- 教师日志查询列表-->
+<select id="teacherJournal" resultMap="BaseResultMap" >
+	select
+	 <include refid="Base_Column_List"/>
+	from tb_teacher_journal
+	  <where> 
+	  flag_del = 0
+	  </where>
+</select>
+
+</mapper>   

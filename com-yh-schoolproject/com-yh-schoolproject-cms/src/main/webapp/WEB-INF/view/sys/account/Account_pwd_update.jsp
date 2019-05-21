@@ -1,0 +1,52 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@include file="../../base/base.jsp"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<body>
+	     <div class="x-body">
+		<form class="layui-form" action="<%=basePath %>login/modifyPassword" method="post">
+
+			<div class="layui-form-item">
+				<label for="username" class="layui-form-label"> <span
+					class="x-red">*</span>用户名
+				</label>
+				<div class="layui-input-inline">
+					<input type="text" name="loginName"
+						value="${result.accountModel3.loginName}"  lay-verify="required"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label for="L_pass" class="layui-form-label"> <span
+					class="x-red">*</span>旧密码
+				</label>
+				<div class="layui-input-inline">
+					<input type="password" id="pwd" name="pwd" lay-verify="pass" autocomplete="off" class="layui-input">
+				</div>
+
+			
+			<div class="layui-form-item">
+				<label for="L_pass" class="layui-form-label"> <span
+					class="x-red">*</span>新密码
+				</label>
+				<div class="layui-input-inline">
+					<input type="password" name="newpassword" lay-verify="pass" autocomplete="off" class="layui-input">
+				</div>
+
+            <div class="layui-form-item">
+				<label for="L_repass" class="layui-form-label"> </label>
+				<button class="layui-btn" type="submit">提交</button>
+			</div>
+			
+		</form>
+	</div>
+	     
+	
+</body>
+</html>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.teacher.ScoreMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseScoreMap" type="com.yh.model.teacher.ScoreModel" >
+	<result column="score_id" property="scoreId"/>
+	<result column="term" property="term"/>
+	<result column="sname" property="sname"/>
+	<result column="cclass" property="cclass"/>
+	<result column="course" property="course"/>
+	<result column="exam_score" property="examScore"/>
+	<result column="exam_time" property="examTime"/>
+	<result column="flag_del" property="flagDel"/>
+	<result column="state" property="state"/>
+</resultMap>   
+<sql id="Score_Column_List" >
+ 	`score_id`, `term`, `sname`, `cclass`, `course`, `exam_score`, `exam_time`, `flag_del`, `state`
+</sql>
+   
+<!-- 查询成绩列表-->
+<select id="queryScoreList" resultType="com.yh.model.teacher.ScoreModel">
+	<!-- select score.*,student.sname
+	<include refid="Score_Column_List"/>
+	from tb_score score,tb_student student 
+	where student.student_id=score.student_id
+	and flag_del = 0 -->
+	<!-- select * from student_score
+	where flag_del = 0 -->
+	select 
+	<include refid="Score_Column_List"/>
+	from tb_score  
+	where flag_del = 0 
+	<if test="score.sname != null and score.sname != ''">
+	  and sname like concat(concat('%',#{score.sname}),'%')
+	</if>
+	<if test="score.cclass != null and score.cclass !=''">
+	  and cclass=#{score.cclass}
+	</if>
+	<if test="score.course != null and score.course !=''">
+	  and course=#{score.course}
+	</if>
+	<if test="score.examScore != null and score.examScore !=''">
+	  and exam_score=#{score.examScore}
+	</if>
+	<if test="score.examTime!=null and score.examTime!=''">
+		and exam_time=#{score.examTime}
+	</if>
+	  limit #{page.pageIndex},#{page.pageSize} 
+</select>
+<select id="queryDataCount" resultType="java.lang.Integer">
+	select 
+ 	count(*) as dataCount 
+ 	from tb_score
+	where flag_del = 0
+    <if test="sname != null and sname != ''">
+	  and sname like concat(concat('%',#{sname}),'%')
+	</if>
+	<if test="cclass != null and cclass !=''">
+	  and cclass=#{cclass}
+	</if>
+	<if test="course != null and course !=''">
+	  and course=#{course}
+	</if>
+	<if test="examScore != null and examScore !=''">
+	  and exam_score=#{examScore}
+	</if>
+	<if test="examTime!=null and examTime!=''">
+		and exam_time=#{examTime}	
+	</if>
+</select>
+
+<!-- 删除成绩-->
+<update id="deleteScore">
+	update tb_score set flag_del=1 where score_id=#{scoreId}
+</update>
+
+<!-- 根据ID查询成绩列表-->
+<select id="queryScoreById" resultMap="BaseScoreMap">
+	select 
+	 <include refid="Score_Column_List"/> 
+	 from tb_score where score_id = #{0}
+</select>
+
+<!-- 添加成绩-->
+<insert id="addScore">
+    insert into tb_score (score_id,term,sname,cclass,course,exam_score,exam_time,flag_del,state) 
+    values(#{scoreId},#{term},#{sname},#{cclass},#{course},#{examScore},#{examTime},#{flagDel},#{state})
+</insert>
+
+<!-- 修改成绩-->
+<update id="updataScore">
+update tb_score 
+	<trim prefix="SET" suffixOverrides=",">
+		<if test="term !=null and term !=''">
+			term = #{term},
+		</if>
+		<if test="sname !=null and sname !=''">
+			sname = #{sname},
+		</if>
+		<if test="cclass !=null and cclass !=''">
+			cclass = #{cclass},
+		</if>
+		<if test="course !=null and course !=''">
+			course = #{course},
+		</if>
+		<if test="examScore !=null and examScore !=''">
+			exam_score = #{examScore},
+		</if>
+		<if test="examTime !=null">
+			exam_time = #{examTime},
+		</if>
+		<if test="state !=null and state !=''">
+			state = #{state},
+		</if>
+	</trim>
+where score_id=#{scoreId}
+</update>
+
+<!-- 成绩绑定学生 -->
+<!-- <insert id="scoreBindStudent">
+insert into tb_score_student(score_student_id,score_id,student_id) 
+values(#{id},#{scoreId},#{studentid});
+</insert> -->
+
+</mapper>   

@@ -1,0 +1,140 @@
+package com.yh.cms.student.controller;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.yh.api.service.DicService;
+import com.yh.api.service.StudentLeaveService;
+import com.yh.api.service.teacher.TeacherService;
+
+import com.yh.model.page.PageModel;
+import com.yh.model.student.StudentLeaveModel;
+import com.yh.model.student.StudentWriteModel;
+import com.yh.model.sys.AccountModel;
+import com.yh.model.sys.DicModel;
+import com.yh.model.teacher.TeacherModel;
+
+@Controller //此注解标识这是一个控制器
+@RequestMapping("/student")
+public class StudentLeaveController {
+	
+	//面向接口思想引入StudentLeaveService接口
+	@Autowired
+	private StudentLeaveService studentLeaveService;
+	
+	//关联教师表需要引用教师接口里面的方法
+	@Autowired
+	private TeacherService teacherService;
+	//关联数据字典表需要引用数据字典接口里面的方法
+	@Autowired
+	private DicService dicService;
+	
+	//查询学生请假列表加分页
+	@RequestMapping("queryStuLeaveList")
+	public ModelAndView queryStuLeaveList(PageModel page,StudentLeaveModel stuLeave){
+		//获取studentLeaveService接口中查询列表方法
+		PageModel pages=studentLeaveService.querystuLeaveList(page,stuLeave);
+		//因传了2个参数需要用map集合接收所以new一个map集合
+		Map<String, Object> map=new HashMap<String, Object>();
+		//添加参数
+		map.put("stuLeave", stuLeave);
+		map.put("page", pages);
+		//返回页面
+		return new ModelAndView("student/student_LeaveList","map",map);
+	}
+    //学生请假添加修改之前方法
+	@RequestMapping("bfaddOrUpdate")
+	public ModelAndView bfAddOrUpdate(String sleaveId){
+		StudentLeaveModel stuLeave = new StudentLeaveModel();
+		if(!StringUtils.isEmpty(sleaveId)){
+			stuLeave = studentLeaveService.queryStuLeaveById(sleaveId);
+		}
+		List<TeacherModel> teacher = teacherService.queryList();
+		List<DicModel> dic = dicService.queryStuLeaveList();
+		Map<String, Object> resultMap =   new HashMap<String, Object>();
+		resultMap.put("stuLeave", stuLeave);
+		resultMap.put("teacher", teacher);
+		resultMap.put("dic", dic);
+		return  new ModelAndView("student/stuLeave_add_update","result",resultMap) ;
+	}
+	//学生请假添加修改
+	@RequestMapping("AddOrUpdate")
+	public ModelAndView AddOrUpdate(PageModel page,StudentLeaveModel stuLeave){
+		if(!StringUtils.isEmpty(stuLeave.getSleaveId())){
+			studentLeaveService.update(stuLeave);
+		}else{
+			stuLeave.setSleaveId(UUID.randomUUID()+"");
+			stuLeave.setState(1);
+			studentLeaveService.save(stuLeave);
+           String SleaveId =  stuLeave.getSleaveId();
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("SleaveId", SleaveId);
+			
+			
+		/*	List<String> teacherid =  stuLeave.getTeacherId();
+			for(String tid:teacherid){
+			map.put("id",UUID.randomUUID()+"");
+			map.put("tid",tid);
+			studentLeaveService.stuLeaveBindteacher(map);
+	  }*/
+			
+	 }
+		return  queryStuLeaveList(page,new StudentLeaveModel());
+	}
+	//查询学生请假待审批的列表
+		@RequestMapping("queryLists")
+		public ModelAndView queryLists(PageModel page,StudentLeaveModel stuLeave){
+			PageModel pages=studentLeaveService.queryLists(page,stuLeave);
+			Map<String, Object> map=new HashMap<String, Object>();
+			map.put("stuLeaves", stuLeave);
+			map.put("pages", pages);
+			return new ModelAndView("student/student_leaveLists","map",map);
+		}
+		
+			
+			
+		//学生请假查看
+		@RequestMapping("bfleaveLook")
+		public ModelAndView bfleaveLook(String sleaveId){
+			StudentLeaveModel stuLeave = new StudentLeaveModel();
+			if(!StringUtils.isEmpty(sleaveId)){
+				stuLeave = studentLeaveService.queryStuLeaveById(sleaveId);
+			}
+			List<TeacherModel> teacher = teacherService.queryList();
+			List<DicModel> dic = dicService.queryStuLeaveList();
+			Map<String, Object> resultMap =   new HashMap<String, Object>();
+			resultMap.put("stuLeave", stuLeave);
+			resultMap.put("teacher", teacher);
+			resultMap.put("dic", dic);
+			return  new ModelAndView("student/stulevae_look","result",resultMap) ;
+		}
+		
+		@RequestMapping("leavelook")
+		public ModelAndView look(PageModel page,StudentLeaveModel stuLeave){
+			return  queryStuLeaveList(page,new StudentLeaveModel());
+		}
+		
+
+		//学生请假同意审批controller
+		 @RequestMapping("adopt")
+		 public ModelAndView adopt(PageModel page,StudentLeaveModel stuLeave){
+			studentLeaveService.adopt(stuLeave);
+		     return  queryLists(page,new StudentLeaveModel());
+	        }
+		 
+		//学生请假不同意审批审批controller
+		 @RequestMapping("noadopt")
+		 public ModelAndView noadopt(PageModel page,StudentLeaveModel stuLeave){
+			studentLeaveService.noadopt(stuLeave);
+		     return  queryLists(page,new StudentLeaveModel());
+	        }
+		 
+}

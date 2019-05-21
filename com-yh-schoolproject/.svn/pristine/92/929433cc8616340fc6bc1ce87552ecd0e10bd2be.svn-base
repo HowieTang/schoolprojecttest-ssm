@@ -1,0 +1,51 @@
+package com.yh.cms.teacher.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.yh.api.service.teacher.TeacherJournalService;
+import com.yh.model.teacher.TeacherJournalModel;
+
+/**
+ * 教师日志控制器
+ * */
+@Controller //此注解标识这是一个控制器
+@RequestMapping("/teacherjournal")
+public class TeacherJournalController {
+
+	@Autowired
+	private TeacherJournalService teacherJournalService;
+	
+	/** 查询教学日志列表* */
+	@RequestMapping("teacherJournalList")
+	public String teacherJournalList(){
+		return "teacher/teacherjournal_list";
+	}
+	
+	@RequestMapping("event")
+	public ModelAndView event(){
+		return new ModelAndView ("teacher/event");
+	}
+	
+	@RequestMapping("dojsp")
+	public ModelAndView dojsp(){
+		return new ModelAndView ("teacher/do");
+	}
+	
+	@RequestMapping("connect")
+	public ModelAndView connect(){
+		return new ModelAndView ("teacher/connect");
+	}
+	
+	//教师日志列表
+	@RequestMapping("queryteacherJournalList")
+	public ModelAndView queryteacherJournalList(){
+		List<TeacherJournalModel> teacherJournal = teacherJournalService.queryteacherJournalList();
+		System.out.println(teacherJournal);
+		return new ModelAndView("base/teacherjournal_list","teacherJournal",teacherJournal);
+	}
+}

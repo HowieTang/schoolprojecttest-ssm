@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.teacher.CircularMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseCircularMap" type="com.yh.model.teacher.CircularModel" >
+	<result column="circular_id" property="circularId"/>
+	<result column="type" property="type"/>
+	<result column="title" property="title"/>
+	<result column="content" property="content"/>
+	<result column="create_time" property="createTime"/>
+	<result column="submit_time" property="submitTime"/>
+	<result column="update_time" property="updateTime"/>
+	<result column="flag_del" property="flagDel"/>
+	<result column="state" property="state"/>
+</resultMap>   
+<sql id="Circular_Column_List" >
+ 	`circular_id`, `type`, `title`, `content`, `create_time`, `submit_time`, `update_time`, `flag_del`, `state`
+</sql>
+   
+<!-- 查询公告列表-->
+<select id="queryCircularList" resultMap="BaseCircularMap">
+	select 
+	<include refid="Circular_Column_List"/>
+	from tb_circular  
+	where flag_del = 0 
+	<if test="circular.title != null and circular.title != ''">
+	  and title like concat(concat('%',#{circular.title}),'%')
+	</if>
+	  limit #{page.pageIndex},#{page.pageSize} 
+</select>
+<select id="queryDataCount" resultType="java.lang.Integer" parameterType="com.yh.model.teacher.CircularModel">
+	select 
+ 	count(*) as dataCount 
+ 	from tb_circular
+	where flag_del = 0
+	<if test="title != null and title != ''">
+	  and title like concat(concat('%',#{title}),'%')
+	</if>
+</select>
+
+<!-- 删除公告-->
+<update id="deleteCircular">
+	update tb_circular set flag_del=1 where circular_id=#{circularId}
+</update>
+
+<!-- 根据ID查询公告列表-->
+<select id="queryCircularById" resultMap="BaseCircularMap">
+	select 
+	 <include refid="Circular_Column_List"/> 
+	 from tb_circular where circular_id = #{0}
+</select>
+
+<!-- 添加公告-->
+<insert id="addCircular">
+    insert into tb_circular (circular_id,type,title,content,create_time,submit_time,flag_del,state) 
+    values(#{circularId},#{type},#{title},#{content},now(),now(),#{flagDel},#{state})
+</insert>
+
+<!-- 修改公告-->
+<!-- <update id="updataCircular">
+update tb_circular 
+	<trim prefix="SET" suffixOverrides=",">
+		<if test="dicId !=null and dicId !=''">
+			dic_id = #{dicId},
+		</if>
+		<if test="title !=null and title !=''">
+			title = #{title},
+		</if>
+		<if test="content !=null and content !=''">
+			content = #{content},
+		</if>
+		<if test="submitTime !=null">
+			submit_time = #{submitTime},
+		</if>
+		<if test="updateTime !=null">
+			update_time = #{updateTime},
+		</if>
+		<if test="state !=null and state !=''">
+			state = #{state},
+		</if>
+	</trim>
+where circular_id=#{circularId}
+</update> -->
+
+<!-- 添加公告选择类型 -->
+<!-- <insert id="circularBindDic">
+insert into tb_circular_dic(circular_dic_id,circular_id,dic_id) 
+values(#{id},#{circularId},#{did});
+</insert> -->
+
+
+<!-- 查询数据字典 -->
+<!-- <select id="queryDic" resultMap="BaseCircularMap" >
+	select *
+	from tb_data_dic
+	where flag_del = 0 and des = "tz"
+</select>
+ -->
+
+</mapper>   

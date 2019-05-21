@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.DicMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseResultDicMap" type="com.yh.model.sys.DicModel" >
+	<result column="dic_id" property="did"/>
+	<result column="type" property="type"/>
+	<result column="des" property="des"/>
+	<result column="code" property="code"/>
+	
+</resultMap>      
+<sql id="Base_Dic_List" >
+`dic_id`, `type`, `des`, `code`
+</sql>
+   
+<!-- 根据id查询楼层-->
+<select id="queryDicList" resultMap="BaseResultDicMap" >
+	select 
+	<include refid="Base_Dic_List"/>
+	from tb_data_dic
+	<where>flag_del = 0
+	    <if test="dic.did != null and dic.did !=''">
+	    and dic_id=#{dic.did}
+	    </if>
+	    <if test="dic.type != null and dic.type != ''">
+	      and type like concat(concat('%',#{dic.type}),'%')
+	    </if>
+	    
+	     limit #{page.pageIndex},#{page.pageSize} 
+	  </where>
+</select>
+
+<!-- 查询数据字典表flag_del为0的数据 -->
+<select id="queryStuLeaveList" resultMap="BaseResultDicMap" >
+	select
+	 <include refid="Base_Dic_List"/>
+	from tb_data_dic
+	  where flag_del = 0 and des = "leave"
+</select>
+ 
+ <select id="queryDicDataCount" resultType="java.lang.Integer" >
+ 	select 
+ 	count(*) as dataCount 
+ 	from tb_data_dic
+	  <where> flag_del = 0
+	    <if test="did != null and did !=''">
+	     AND  dic_id=#{did}
+	    </if>
+	    <if test="type != null and type != ''">
+	      and type like  concat(concat('%',#{type}),'%')
+	    </if>
+	  </where>
+</select>
+
+<update id="deleteDicById">
+	update tb_data_dic set flag_del=1 where dic_id=#{did}
+</update>
+
+
+
+<!-- 添加 -->
+<insert id="addDic">
+	insert into tb_data_dic(dic_id , type , des , code)
+	values(#{did}, #{type}, #{des}, #{code});
+</insert>
+
+<!-- 添加公告选择类型 -->
+<select id="queryCircularList" resultMap="BaseResultDicMap" >
+	select
+	<include refid="Base_Dic_List"/>
+	from tb_data_dic
+	where flag_del = 0 and des = "tz"
+</select>
+
+<!-- 添加教学笔记选择类型 -->
+<select id="queryTeacherNotesList" resultMap="BaseResultDicMap" >
+	select
+	<include refid="Base_Dic_List"/>
+	from tb_data_dic
+	where flag_del = 0 and des = "teachernotes"
+</select>
+
+<!-- 添加新闻选择类型 -->
+<select id="queryNewsType" resultMap="BaseResultDicMap">
+	select
+	<include refid="Base_Dic_List"/>
+	from tb_data_dic
+	where flag_del = 0 and des = "news"
+</select>
+
+<!-- 添加请假选择类型 -->
+<select id="queryLeaveList" resultMap="BaseResultDicMap" >
+	select
+	<include refid="Base_Dic_List"/>
+	from tb_data_dic
+	where flag_del = 0 and des = "leave"
+</select>
+<!-- 添加职务选择类型 -->
+<select id="querybusinessList" resultMap="BaseResultDicMap" >
+	select
+	<include refid="Base_Dic_List"/>
+	from tb_data_dic
+	where flag_del = 0 and des = "business"
+</select>
+</mapper>   

@@ -1,0 +1,15 @@
+package com.yh.api.service.teacher;
+
+import java.util.List;
+
+import com.yh.model.teacher.TeacherJournalModel;
+
+/**
+ * 教师日志功能接口
+ * @param <T>
+ * */
+public interface TeacherJournalService {
+
+	/**教师日志查询列表接口*/
+	public List<TeacherJournalModel> queryteacherJournalList();
+}

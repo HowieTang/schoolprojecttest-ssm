@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.yh.ws.mapper.RoleMapper" >
+<!-- Result Map-->
+ <resultMap id="BaseResultMap" type="com.yh.model.sys.RoleModel" >
+	<result column="role_id" property="roleId"/>
+	<result column="role_name" property="roleName"/>
+	<result column="remark" property="remark"/>
+	<result column="create_time" property="createTime"/>
+	<result column="update_time" property="updateTime"/>
+	<result column="flag_del" property="flagDel"/>
+</resultMap>
+
+<sql id="Base_Column_List" >
+`role_id`, `role_name`, `remark`, `create_time`, `update_time`, `flag_del`
+</sql>
+
+<!-- 根据id查询楼层-->
+<!-- 查询楼层-->
+<select id="queryRoleList" resultMap="BaseResultMap" >
+	select 
+	<include refid="Base_Column_List"/>
+	from tb_role
+	<where> flag_del = 0
+	    <if test="role.roleId != null and role.roleId !=''">
+	      AND role_id=#{role.roleId}
+	    </if>
+	    <if test="role.roleName != null and role.roleName != ''">
+	      and role_name like concat(concat('%',#{role.roleName}),'%')
+	    </if>
+	     limit #{page.pageIndex},#{page.pageSize} 
+	  </where>
+</select>
+ 
+ <select id="queryRoleDataCount" resultType="java.lang.Integer" >
+ 	select 
+ 	count(*) as dataCount 
+ 	from tb_role
+	  <where> flag_del = 0
+	    <if test="roleName != null and roleName !=''">
+	      AND role_id=#{roleName}
+	    </if>
+	    <if test="roleName != null and roleName != ''">
+	      and role_name like  concat(concat('%',#{roleName}),'%')
+	    </if>
+	  </where>
+</select>
+<!--  查询列表 -->
+<select id="queryList" resultMap="BaseResultMap" >
+	select
+	<include refid="Base_Column_List"/>
+		from tb_role
+	    where flag_del = 0
+</select>
+
+<!-- 根据id查询楼层-->
+<select id="queryRoleById" resultMap="BaseResultMap">
+	select 
+	 <include refid="Base_Column_List"/> 
+	 from tb_role where role_id = #{0}
+</select>
+
+<!-- 添加 -->
+<select id="addRole"> 
+ insert into tb_role(<include refid="Base_Column_List"/>)
+ values(#{roleId},#{roleName},#{remark},#{updateTime},#{createTime},#{flagDel})
+</select>
+
+<!-- 根据id删除-->
+<update id="deleteRoleById">
+	update tb_role set flag_del=1 where role_id=#{roleId}
+</update>
+
+<!-- 修改 -->
+<update id="updateRole">
+update tb_role
+	<trim prefix="SET" suffixOverrides=",">
+		<if test="roleName !=null and roleName !=''">
+			role_name = #{roleName},
+		</if>
+		<if test="remark !=null and remark !=''">
+			remark = #{remark},
+		</if>
+		<if test="updateTime!=null">
+			update_time = #{updateTime},
+		</if>
+		<if test="createTime!=null">
+			create_time = #{createTime},
+		</if>
+	</trim>
+where role_id=#{roleId}
+</update>
+ 
+<insert id="roleBindpower"> 
+ insert into tb_role_power
+ values(#{id},#{rid},#{pid})
+</insert>
+</mapper>   

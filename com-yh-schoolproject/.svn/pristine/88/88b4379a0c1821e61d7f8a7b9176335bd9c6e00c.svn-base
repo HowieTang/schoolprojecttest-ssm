@@ -1,0 +1,104 @@
+package com.yh.model.teacher;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 教师日志实体类
+ * */
+public class TeacherJournalModel implements Serializable {
+
+	/**  */
+	private static final long serialVersionUID = 1L;
+	
+	/** 教学日志ID */
+	private String journalId;
+	
+	/** 教学日志 标题*/
+	private String title;
+	
+	/** 教学日志内容 */
+	private String content;
+	
+	/** 教学日志开始时间 */
+	private Date startTime;
+	
+	/** 教学日志修改时间时间 */
+	private Date updateTime;
+	
+	/** 教学日志结束时间 */
+	private Date endTime;
+	
+	/** 教学日志是否删除 */
+	private int flagDel;
+
+	/** 教学日志状态 */
+	private int state;
+
+	public String getJournalId() {
+		return journalId;
+	}
+
+	public void setJournalId(String journalId) {
+		this.journalId = journalId;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public int getFlagDel() {
+		return flagDel;
+	}
+
+	public void setFlagDel(int flagDel) {
+		this.flagDel = flagDel;
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+	
+
+	
+}

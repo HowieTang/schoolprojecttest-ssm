@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.StudentWriteMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseResultMap" type="com.yh.model.student.StudentWriteModel" >
+	<result column="write_id"    property="writeId"/>
+	<result column="letter_writer"  property="letterWriter"/>
+	<result column="addressee" property="addressee"/>
+	<result column="message_content" property="messageContent"/>
+	<result column="send_time" property="sendTime"/>
+	<result column="state" property="state"/>
+</resultMap>
+
+<sql id="Base_Column_List" >
+ 	write_id,letter_writer,addressee,message_content,send_time,state
+</sql>
+
+<!-- 根据id查询楼层-->
+<select id="queryStuWritetList" resultMap="BaseResultMap" >
+	select
+	 <include refid="Base_Column_List"/>
+	from tb_student_write
+	  <where> state = 1
+	    <if test="stuWrite.writeId != null and stuWrite.writeId  !=''">
+	      AND write_id=#{stuWrite.writeId}
+	    </if>
+	     <if test="stuWrite.sendTime!=null and stuWrite.sendTime!=''">
+		    and send_time like concat(concat('%',#{stuWrite.sendTime}),'%')
+		</if>
+	    <if test="stuWrite.addressee != null and stuWrite.addressee != ''">
+	      and addressee like concat(concat('%',#{stuWrite.addressee}),'%')
+	    </if>
+	     limit #{page.pageIndex},#{page.pageSize} 
+	  </where>
+	
+	
+</select>
+<select id="queryDataCount" resultType="java.lang.Integer" >
+ 	select 
+ 	count(*) as dataCount 
+ 	from tb_student_write
+	  <where>  state = 1
+	    <if test="writeId != null and writeId !=''">
+	      AND write_id=#{writeId}
+	    </if>
+	    <if test="sendTime!=null and sendTime!=''">
+		    and send_time =#{sendTime}
+		</if>
+	    <if test="addressee != null and addressee != ''">
+	      and addressee like  concat(concat('%',#{addressee}),'%')
+	    </if>
+	  </where>
+</select>
+
+
+<insert id="save">
+insert into tb_student_write(
+<include refid="Base_Column_List"/>
+)values(#{writeId},#{letterWriter},#{addressee},#{messageContent},#{sendTime},#{state}); 
+</insert>
+
+<select id="queryStuWriteById" resultMap="BaseResultMap">
+	select 
+	 <include refid="Base_Column_List"/> 
+	 from tb_student_write where write_id = #{0}
+</select>
+
+<update id="delete"  parameterType="java.lang.String">
+  		update tb_student_write set state=3 where write_id = #{writeId}
+</update>
+
+<insert id="stuWriteBindteacher">
+insert into tb_stuWrite_teacher(stuw_teacher_id,write_id,teacher_id) values(#{id},#{swriteId},#{tid}); 
+</insert>
+
+<insert id="stuWriteBindstudent">
+insert into tb_stuWrite_student(stuwrite_stu_id,write_id,student_id) values(#{id},#{swriteId},#{stuId}); 
+</insert>
+
+</mapper>   

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.teacher.TeacherMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseResultTeacherMap" type="com.yh.model.teacher.TeacherModel" >
+	<result column="teacher_id" property="teacherId"/>
+	<result column="tname" property="tname"/>
+	<result column="sex" property="sex"/>
+	<result column="age" property="age"/>
+	<result column="email" property="email"/>
+	<result column="tel" property="tel"/>
+	<result column="admission_time" property="admissionTime"/>
+	<result column="teach" property="teach"/>
+	<result column="type" property="type"/>
+	<result column="teacher_type" property="teacherType"/>
+	<result column="create_time" property="createTime"/>
+	<result column="update_time" property="updateTime"/>
+	<result column="flag_del" property="flagDel"/>
+	<result column="state" property="state"/>
+</resultMap>      
+<sql id="Base_Teacher_List" >
+`teacher_id`, `tname`, `sex`, `age`, `email`, `tel`, `admission_time`, `teach`, `type`, `teacher_type`, `create_time`, `update_time`, `flag_del`, `state`
+</sql>
+   
+<!-- 根据id查询楼层-->
+<select id="queryTeacherList" resultMap="BaseResultTeacherMap" >
+	select 
+	<include refid="Base_Teacher_List"/>
+	from tb_teacher
+	<where> flag_del = 0
+	    <if test="teacher.teacherId != null and teacher.teacherId !=''">
+	      AND teacher_id=#{teacher.teacherId}
+	    </if>
+	    <if test="teacher.tname != null and teacher.tname != ''">
+	      and tname like concat(concat('%',#{teacher.tname}),'%')
+	    </if>
+	     limit #{page.pageIndex},#{page.pageSize} 
+	  </where>
+</select>
+ 
+<!--  学生请假关联啊查询教师表方法 -->
+ <select id="queryList" resultMap="BaseResultTeacherMap" >
+	select
+	 <include refid="Base_Teacher_List"/>
+	from tb_teacher
+	  where flag_del = 0
+</select>
+ 
+ <select id="queryTeacherDataCount" resultType="java.lang.Integer" >
+ 	select 
+ 	count(*) as dataCount 
+ 	from tb_teacher
+	  <where> flag_del = 0
+	    <if test="teacherId != null and teacherId !=''">
+	      AND teacher_id=#{teacherId}
+	    </if>
+	    <if test="tname != null and tname != ''">
+	      and tname like  concat(concat('%',#{tname}),'%')
+	    </if>
+	  </where>
+</select>
+<!-- 根据id删除 -->
+<update id="deleteTeacherById">
+	update tb_teacher set flag_del=1 where teacher_id=#{teacherId}
+</update>
+<!-- 添加 -->
+<insert id="addTeacher">
+	insert into tb_teacher(teacher_id,tname,sex,age,email,tel,admission_time,teach,type,teacher_type,create_time,flag_del,state)
+	values(#{teacherId},#{tname},#{sex},#{age},#{email},#{tel},now(),#{teach},#{type},#{teacherType},now(),#{flagDel},#{state})
+</insert>
+
+<!-- 根据ID查询教师列表-->
+<select id="queryTeacherById" resultMap="BaseResultTeacherMap">
+	select 
+	 <include refid="Base_Teacher_List"/> 
+	 from tb_teacher where teacher_id = #{0}
+</select>
+<!-- 教师添加账户 -->
+<insert id="teacherBindAccount">
+insert into tb_account_teacher(account_teacher_id,account_id,teacher_id) 
+values(#{id},#{accountid},#{tid});
+</insert>
+
+<!-- 班级绑定教师 -->
+<select id="queryClassList" resultMap="BaseResultTeacherMap" >
+	select
+	<include refid="Base_Teacher_List"/>
+	from tb_teacher
+	where flag_del = 0 
+</select>
+</mapper>   

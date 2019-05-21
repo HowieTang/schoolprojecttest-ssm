@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.teacher.StudentMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseStudentMap" type="com.yh.model.teacher.StudentModel" >
+	<result column="student_id" property="studentId"/>
+	<result column="sname" property="sname"/>
+	<result column="sex" property="sex"/>
+	<result column="age" property="age"/>
+	<result column="email" property="email"/>
+	<result column="tel" property="tel"/>
+	<result column="parent_tel" property="parentTel"/>
+	<result column="cclass" property="cclass"/>
+	<result column="create_time" property="createTime"/>
+	<result column="update_time" property="updateTime"/>
+	<result column="flag_del" property="flagDel"/>
+	<result column="state" property="state"/>
+	<result column="student_type" property="studentType"/>
+</resultMap>   
+
+<sql id="Student_Column_List" >
+ 	`student_id`, `sname`, `sex`, `age`, `email`, `tel`, `parent_tel`, `cclass`,
+ 	 `create_time`, `update_time`, `flag_del`, `state`, `student_type`
+</sql>
+   
+<!-- 查询学生列表-->
+<select id="queryStudentList" resultMap="BaseStudentMap">
+	select 
+	<include refid="Student_Column_List"/>
+	from tb_student  
+	where flag_del = 0 
+	<if test="student.sname != null and student.sname !=''">
+	  and sname=#{student.sname}
+	</if>
+	<if test="student.cclass != null and student.cclass !=''">
+	  and cclass=#{student.cclass}
+	</if>
+	<!-- <if test="student.createTime !=null and student.createTime !=''">
+		and create_time=#{student.createTime}
+	</if> -->
+	  limit #{page.pageIndex},#{page.pageSize} 
+</select>
+<select id="queryDataCount" resultType="java.lang.Integer" parameterType="com.yh.model.teacher.StudentModel">
+	select 
+ 	count(*) as dataCount 
+ 	from tb_student
+	where flag_del = 0
+	<if test="sname != null and sname !=''">
+	  and sname=#{sname}
+	</if>
+	<if test="cclass != null and cclass !=''">
+	  and cclass=#{cclass}
+	</if>
+	<!-- <if test="createTime !=null and createTime !=''">
+		and create_time=#{createTime}	
+	</if> -->
+</select>
+
+<!-- 删除学生-->
+<update id="deleteStudent">
+	update tb_student set flag_del=1 where student_id=#{studentId}
+</update>
+
+<!-- 添加学生-->
+<insert id="addStudent">
+    insert into tb_student (student_id,sname,sex,age,email,tel,parent_tel,cclass,create_time,flag_del,state,student_type) 
+    values(#{studentId},#{sname},#{sex},#{age},#{email},#{tel},#{parentTel},#{cclass},now(),#{flagDel},#{state},#{studentType})
+</insert>   
+
+<!-- 根据ID查询学生列表-->
+<select id="queryStudentById" resultMap="BaseStudentMap">
+	select 
+	 <include refid="Student_Column_List"/> 
+	 from tb_student where student_id = #{0}
+</select>
+
+<!-- 学生添加账户 -->
+<insert id="studentBindAccount">
+insert into tb_account_student(account_student_id,account_id,student_id) 
+values(#{id},#{accountid},#{studentId});
+</insert>
+
+
+<!-- 成绩绑定学生 -->
+<select id="queryList" resultMap="BaseStudentMap" >
+	select
+	<include refid="Student_Column_List"/>
+	from tb_student
+	where flag_del = 0
+</select>
+
+<!-- 班级绑定学生 -->
+<select id="queryNoClassList" resultMap="BaseStudentMap" >
+	select
+	<include refid="Student_Column_List"/>
+	from tb_student
+	where flag_del = 0 and cclass= "暂无班级"
+	<if test="student.sname != null and student.sname !=''">
+	  and sname=#{student.sname}
+	</if>
+	 limit #{page.pageIndex},#{page.pageSize}  
+</select>
+ <select id="queryDataCount2" resultType="java.lang.Integer" parameterType="com.yh.model.teacher.StudentModel">
+	select 
+ 	count(*) as dataCount 
+ 	from tb_student
+	where flag_del = 0 and cclass= "暂无班级"
+	<if test="sname != null and sname !=''">
+	  and sname=#{sname}
+	</if>
+</select>
+<!-- 学生绑定班级 -->
+<!-- <insert id="studentBindClass">
+insert into tb_student_class(stu_class_id,student_id,class_id) 
+values(#{id},#{studentId},#{cid});
+</insert> -->
+
+<!-- 学生写信修改 -->
+ <update id="update" >
+    update tb_student
+	<trim prefix="SET" suffixOverrides=",">
+	
+	<if test="sname !=null and sname !=''"> 
+	    sname = #{sname}
+    </if>
+	</trim>
+    where student_id=#{studentId} 
+</update>
+ 
+ 
+</mapper>   

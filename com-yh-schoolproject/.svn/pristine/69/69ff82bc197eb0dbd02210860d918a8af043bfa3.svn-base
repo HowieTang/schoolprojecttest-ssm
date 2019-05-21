@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yh.ws.mapper.StudentVoteMapper">
+
+	<resultMap id="BaseResultMap" type="com.yh.model.student.StuVoteModel">
+
+		<result column="vote_id" property="voteId" /> <!--投票id -->
+		<result column="vote_title" property="voteTitle" /><!-- 投票标题 -->
+		<result column="vote_result" property="voteResult" /><!-- 投票结果 -->
+		<result column="vote_type" property="voteType" />   <!-- 投票类型 -->
+		<result column="vote_stime" property="voteStime" /> <!-- 投票开始时间 -->
+		<result column="vote_etime" property="voteEtime" />  <!-- 投票结束时间 -->
+	    <result column="flag_del" property="flagDel" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		vote_id,vote_title,vote_result,vote_type,vote_stime,vote_etime,flag_del
+	</sql>
+	
+<insert id="voteBindAccount">
+  insert into tb_vote_account(va_id,vote_id,account_id) 
+  values(#{id},#{voteid},#{voteaccountId});
+</insert>   
+
+	<!-- 查询投票列表 -->
+	<select id="queryVoteList" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_vote
+		<where>flag_del = 1
+			<if test="vote.voteId != null and vote.voteId !=''">
+				AND vote_id=#{vote.voteId}<!--投票id -->
+			</if>
+			<if test="vote.voteTitle!=null and vote.voteTitle!=''">
+				and vote_title =#{vote.voteTitle}<!-- 投票标题 -->
+			</if>
+			<if test="vote.voteResult!=null and vote.voteResult!=''">
+				and vote_result =#{vote.voteResult}<!-- 投票结果 -->
+			</if>
+			<if test="vote.voteType != null and vote.voteType != ''">
+				and vote_type like concat(concat('%',#{vote.voteType}),'%')
+			</if>
+			limit #{page.pageIndex},#{page.pageSize} 
+		</where>
+	</select>
+	
+	<!-- 查询投票总数据 -->
+	<select id="queryDataCount" resultType="java.lang.Integer">
+		select
+		count(*) as dataCount
+		from tb_vote
+		<where> flag_del = 1
+			<if test="voteId != null and voteId !=''">
+				AND vote_id=#{voteId}
+			</if>
+			<if test="voteResult!=null and voteResult!=''">
+				and vote_result =#{voteResult}
+			</if>
+			<if test="voteTitle != null and voteTitle != ''">
+				and vote_title like concat(concat('%',#{voteTitle}),'%')
+			</if>
+		</where>
+	</select>
+
+<!-- 添加投票数据 -->
+<insert id="add">
+	insert into tb_vote(<include refid="Base_Column_List"/>) 
+	values(#{voteId},#{voteTitle},#{voteResult},#{voteType},#{voteStime},#{voteEtime},#{flagDel});
+
+</insert>
+</mapper>

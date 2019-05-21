@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.AccountMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseResultMap" type="com.yh.model.sys.AccountModel" >
+	<result column="account_id"    property="accountId"/>
+	<result column="login_name"  property="loginName"/>
+	<result column="pwd" property="pwd"/>
+	<result column="create_time" property="createTime"/>
+	<result column="update_time" property="updateTime"/>
+	<result column="flag_del" property="flagDel"/>
+	<result column="state" property="state"/>   
+	<result column="name" property="name"/> 
+</resultMap>
+
+<sql id="Base_Column_List" >
+ 	account_id,login_name,pwd,create_time,update_time,flag_del,state,name
+</sql>
+
+<!-- 根据id查询楼层-->
+<select id="queryAccountList" resultMap="BaseResultMap" >
+	select
+	 <include refid="Base_Column_List"/>
+	from tb_account
+	  <where> flag_del = 0
+	    <if test="account.accountId != null and account.accountId !=''">
+	      AND account_id=#{account.accountId}
+	    </if>
+	    <if test="account.loginName != null and account.loginName != ''">
+	      and login_name like concat(concat('%',#{account.loginName}),'%')
+	    </if>
+	     limit #{page.pageIndex},#{page.pageSize} 
+	  </where>
+	
+	
+</select>
+<select id="queryDataCount" resultType="java.lang.Integer" >
+ 	select 
+ 	count(*) as dataCount 
+ 	from tb_account
+	  <where> flag_del = 0
+	    <if test="accountId != null and accountId !=''">
+	      AND account_id=#{accountId}
+	    </if>
+	    <if test="loginName != null and loginName != ''">
+	      and login_name like  concat(concat('%',#{loginName}),'%')
+	    </if>
+	  </where>
+</select>
+
+
+<insert id="save">
+insert into tb_account(
+<include refid="Base_Column_List"/>
+) values(#{accountId},#{loginName},#{pwd},#{createTime},#{updateTime},#{flagDel},#{state},#{name}); 
+</insert>
+
+
+<update id="update">
+update tb_account 
+
+<trim suffixOverrides="," prefix="SET">
+
+<if test="loginName !=null and loginName !=''"> login_name = #{loginName}, </if>
+
+<if test="pwd!=null and pwd !=''"> pwd = #{pwd}, </if>
+
+<if test="state!=null and state !=''"> state = #{state}, </if>
+
+</trim>
+where account_id=#{accountId} 
+</update>
+
+<select id="queryAccountById" resultMap="BaseResultMap">
+	select 
+	 <include refid="Base_Column_List"/> 
+	 from tb_account where account_id = #{0}
+</select>
+
+<update id="delete"  parameterType="java.lang.String">
+  		update tb_account set flag_del=1 where account_id = #{accountId}
+</update>
+
+<insert id="accountBindrole">
+insert into tb_account_role(account_role_id,account_id,role_id) values(#{id},#{accountId},#{rid}); 
+</insert>
+
+<!-- 学生老师绑定账户 查询账户表-->
+<!-- 	 教学笔记绑定账户 -->
+<select id="queryList" resultMap="BaseResultMap" >
+	select
+	<include refid="Base_Column_List"/> 
+	from tb_account
+	where flag_del = 0
+</select>
+
+</mapper>   

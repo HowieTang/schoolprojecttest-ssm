@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.NewsMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseResultMap" type="com.yh.model.news.NewsModel" >
+	<result column="news_id" property="news_id"/>
+	<result column="news_title" property="title"/>
+	<result column="news_author" property="author"/>
+	<!-- 数据字典 -->
+	<result column="dic_id" property="dic_id"/>
+	<result column="create_time" property="create_time"/>
+	<result column="update_time" property="update_time"/>
+	<result column="content" property="content"/>
+	<result column="likenum_int" property="likenum_int"/>
+	<result column="page_view" property="page_view"/>
+	<result column="imageupload" property="imageupload"/>
+	<result column="flag_del" property="flag_del"/>
+	<result column="state" property="state"/>
+</resultMap>
+<sql id="Base_Column_List" >
+ 	news_id,news_title,news_author,dic_id,create_time,update_time,content,likenum_int,page_view,imageupload,flag_del,state
+</sql>
+
+<!-- 新闻轮播公告 -->  
+<resultMap id="NewsNotice" type="com.yh.model.news.NewsNoticeModel" >
+	<result column="notice_id" property="notice_id"/>
+	<result column="content" property="content"/>
+</resultMap>
+<sql id="NewsNotice" >
+	notice_id,content
+</sql>
+
+
+<!-- 根据id查询新闻列表及分页及模糊查询-->
+<select id="queryNewsList" resultMap="BaseResultMap" >
+	select 
+	<include refid="Base_Column_List"/>
+	  from tb_news
+	<where> flag_del = 0 and state = 0
+	<if test ="newsModel.news_id != null and newsModel.news_id != ''">
+		and news_id =#{newsModel.news_id}
+	</if>
+	
+	<if test ="newsModel.title != null and newsModel.title !=''" >
+		and news_title like concat(concat('%',#{newsModel.title}),'%')
+	</if>
+	
+	<if test ="newsModel.dic_id != null and newsModel.dic_id !=''">
+		and dic_id like concat(concat('%',#{newsModel.dic_id}),'%')
+	</if>
+	 	limit #{page.pageIndex},#{page.pageSize}
+	</where>
+</select>
+
+<!-- 根据id查询新闻投稿列表及分页 模糊查询 -->
+<select id="queryNewsFeedList" resultMap="BaseResultMap">
+	select
+	<include refid="Base_Column_List"/>
+	from tb_news
+	<where> flag_del = 0 and state = 1
+	<if test ="newsModel.news_id != null and newsModel.news_id != ''">
+		and news_id =#{newsModel.news_id}
+	</if>
+	
+	<if test ="newsModel.title != null and newsModel.title !=''" >
+		and news_title like concat(concat('%',#{newsModel.title}),'%')
+	</if>
+	
+	<if test ="newsModel.dic_id != null and newsModel.dic_id !=''">
+		and dic_id like concat(concat('%',#{newsModel.dic_id}),'%')
+	</if>
+	    
+	    limit #{page.pageIndex},#{page.pageSize}
+	</where>
+</select>
+
+<!-- 查询总页数 -->
+<select id="queryDataCount" resultType="java.lang.Integer">
+	select 
+	count(*) as dataCount  
+ 	from tb_news 
+ 	<where>flag_del = 0 
+ 	<if test="news_id != null and news_id !=''">
+ 		AND news_id=#{news_id}
+ 	</if>
+ 	
+ 	<if test="title != null and title !=''">
+ 		AND news_title like  concat(concat('%',#{title}),'%')
+ 	</if>
+ 	</where>
+</select>
+
+<!-- 根据id删除新闻 -->
+<update id="deleteNewsById">
+ 	update tb_news set flag_del=1 where news_id=#{news_id}
+</update>
+	
+<!-- 新闻投稿过审 -->
+<update id="updateNewsYes">
+	update tb_news set state = 0 where news_id = #{news_id}
+</update>
+
+<!-- 新闻投稿未过审 -->
+<update id="updateNewsNo">
+	update tb_news set state = 2 where news_id = #{news_id}
+</update>
+
+<!-- 根据id查询新闻列表 -->
+<select id="queryNewsById" resultMap="BaseResultMap">
+	select
+	<include refid="Base_Column_List"/>
+	from tb_news where news_id =#{news_id}
+</select>
+
+<!-- 添加新闻 -->
+<insert id="addNews">
+	insert into tb_news (news_id,news_title,news_author,dic_id,create_time,content,imageupload,flag_del,state)
+	 values(#{news_id},#{title},#{author},#{dic_id},#{create_time},#{content},#{imageupload},#{flag_del},1)
+</insert>
+
+<!-- 新闻页面渲染 校园热点 -->
+<select id="queryCampusTrends" resultMap="BaseResultMap">
+	select
+	<include refid="Base_Column_List"/>
+	FROM tb_news WHERE dic_id = '校园热点新闻' AND flag_del = 0 AND state = 0 ORDER BY create_time DESC LIMIT 5
+</select>
+
+<!-- 新闻页面渲染 校园前沿 -->
+<select id="queryCampusFrontier" resultMap="BaseResultMap">
+	select
+	<include refid="Base_Column_List"/>
+	FROM tb_news WHERE dic_id = '校园前沿' AND flag_del = 0 AND state = 0 ORDER BY create_time DESC LIMIT 4
+</select>
+
+<!-- 新闻页面渲染 教师笔记 -->
+<select id="queryTeacherNotes" resultMap="BaseResultMap">
+	select
+	<include refid="Base_Column_List"/>
+	FROM tb_news WHERE dic_id = '教师笔记' AND flag_del = 0 AND state = 0 ORDER BY create_time DESC LIMIT 4
+</select>
+
+<!-- 新闻页面渲染 学生笔记 -->
+<select id="queryStudentNotes" resultMap="BaseResultMap">
+	select
+	<include refid="Base_Column_List"/>
+	FROM tb_news WHERE dic_id = '学生笔记' AND flag_del = 0 AND state = 0 ORDER BY create_time DESC LIMIT 4
+</select>
+
+<!-- 新闻页面渲染 校园通告 -->
+<select id="queryCampusNotice" resultMap="BaseResultMap">
+	select
+	<include refid="Base_Column_List"/>
+	FROM tb_news WHERE dic_id = '校园通告' AND flag_del = 0 AND state = 0 ORDER BY create_time DESC LIMIT 3
+</select>
+
+<!-- 新闻页面渲染 校园成绩通告 -->
+<select id="queryCampusGrades" resultMap="BaseResultMap">
+	select
+	<include refid="Base_Column_List"/>
+	FROM tb_news WHERE dic_id = '校园成绩通告' AND flag_del = 0 AND state = 0 ORDER BY create_time DESC LIMIT 3
+</select>
+
+<!-- 查询全部新闻热点 -->
+<select id="AllCampusTrends" resultMap="BaseResultMap">
+	select
+	<include refid="Base_Column_List"/>
+	from tb_news where dic_id="校园热点新闻" and flag_del = 0 and state = 0 ORDER BY create_time DESC
+</select>
+
+<!-- 点赞 -->
+<update id ="addNumber">
+	update tb_news set likenum_int=#{likenum_int} where news_id=#{news_id}
+</update>
+
+<!-- 浏览量 -->
+<update id="updatePageView">
+	update tb_news set page_view = #{page_view} where news_id = #{news_id}
+</update>
+
+<!-- 新闻轮播公告 -->
+<select id="queryNoticeList" resultMap="NewsNotice">
+	select
+	<include refid="NewsNotice"/>
+	from tb_news_newsnotice
+</select>
+
+
+
+<!-- 查询教学笔记列表-->
+<select id="queryTeacherNotesList" resultMap="BaseResultMap">
+	select 
+	<include refid="Base_Column_List"/>
+	from tb_news  
+	<!-- <where> flag_del  =  0 and login_name=#{teacherNotes.loginName} -->
+	where flag_del =0 and (state=3 or state=4 or state=5)
+	  <if test ="newsModel.title != null and newsModel.title !=''" >
+		and news_title like concat(concat('%',#{newsModel.title}),'%')
+	</if>
+	   limit #{page.pageIndex},#{page.pageSize} 
+</select>
+<!-- 查询总页数 -->
+<select id="queryDataCounts" resultType="java.lang.Integer">
+	select 
+	count(*) as dataCount  
+ 	from tb_news 
+ 	<where> flag_del =0 and (state=3 or state=4 or state=5)
+ 	<if test="title != null and title !=''">
+ 		AND news_title like  concat(concat('%',#{title}),'%')
+ 	</if>
+ 	</where>
+</select>
+
+<!-- 添加教学笔记-->
+<insert id="addTeacherNotes">
+    insert into tb_news (news_id,dic_id,news_title,content,create_time,flag_del,state<!-- ,contribute -->) 
+    values(#{news_id},#{dic_id},#{title},#{content},now(),#{flag_del},#{state}<!-- ,#{contribute} -->)
+</insert>
+
+
+<!-- 删除教学笔记-->
+<!-- <update id="deleteNewsById">
+	update tb_news set flag_del=1 where news_id=#{news_id}
+</update> -->
+
+
+
+</mapper>   

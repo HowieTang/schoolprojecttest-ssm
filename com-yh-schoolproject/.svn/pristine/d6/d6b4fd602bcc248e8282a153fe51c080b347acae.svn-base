@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.LoginMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseResultMap" type="com.yh.model.login.LoginModel" >
+	<result column="account_id"    property="accountId"/>
+	<result column="login_name"  property="loginName"/>
+	<result column="pwd" property="pwd"/>
+	<result column="create_time" property="createTime"/>
+	<result column="update_time" property="updateTime"/>
+	<result column="flag_del" property="flagDel"/>
+	<result column="state" property="state"/>   
+</resultMap>
+
+<resultMap id="BaseResultMap2" type="com.yh.model.login.LoginModel" >
+	<result column="account_id"    property="accountId"/>
+	<result column="login_name"  property="loginName"/>
+	<result column="pwd" property="pwd"/>
+	<result column="create_time" property="createTime"/>
+	<result column="update_time" property="updateTime"/>
+	<result column="flag_del" property="flagDel"/>
+	<result column="state" property="state"/>   
+</resultMap>
+
+<sql id="Base_Column_List" >
+ 	account_id,login_name,pwd,create_time,update_time,flag_del,state
+</sql>
+
+<select id="checkLogin" resultMap="BaseResultMap" >
+	select 
+	<include refid="Base_Column_List"/>
+	from tb_account where login_name=#{0} and pwd=#{1}
+</select>
+ 
+ <update id="modifyPasswordByUsername" parameterType="com.yh.model.login.LoginModel">
+		update tb_account set pwd=#{pwd} where login_name=#{loginName}
+ </update> 
+
+ <select id="findUserByLoginName" resultMap="BaseResultMap2">
+		select 
+		<include refid="Base_Column_List"/>
+		from tb_account where login_name=#{loginName}
+ </select> 
+ 
+ <select id="queryList" resultMap="BaseResultMap" >
+	select
+	<include refid="Base_Column_List"/>
+	from tb_account
+	where flag_del = 0
+</select>
+
+</mapper>   

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:noNamespaceSchemaLocation="classpath:xsd/dubbo.xsd"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd  
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd  
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+   	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+   <!-- 登录模块service -->
+   <dubbo:service interface="com.yh.api.service.LoginService" ref="loginService" />
+   <!-- 权限模块service -->
+   <dubbo:service interface="com.yh.api.service.PowerService" ref="powerService" />
+   <!-- 教师教师列表模块service -->
+   <dubbo:service interface="com.yh.api.service.teacher.TeacherService" ref="teacherService" />
+   <dubbo:service interface="com.yh.api.service.StudentLeaveService" ref="studentLeaveService" />
+   <!-- 学生模块service -->
+   <dubbo:service interface="com.yh.api.service.teacher.StudentService" ref="studentListService" />
+   <!-- 公告模块service -->
+   <dubbo:service interface="com.yh.api.service.teacher.CircularService" ref="circularService" />
+   <!-- 成绩模块service -->
+   <dubbo:service interface="com.yh.api.service.teacher.ScoreService" ref="scoreService" />
+   <dubbo:service interface="com.yh.api.service.DicService" ref="sysService" />
+   <!-- 角色模块service -->
+   <dubbo:service interface="com.yh.api.service.RoleService" ref="roleService" />
+   <!-- 账户模块service -->
+   <dubbo:service interface="com.yh.api.service.AccountService" ref="accountService" />
+   <!-- 菜单模块service -->
+   <dubbo:service interface="com.yh.api.service.MenuService" ref="menuService" />
+   <!-- 教师课程列表模块service -->
+   <dubbo:service interface="com.yh.api.service.teacher.CourseService" ref="courseService" />
+   <!-- 数据字典列表模块service -->
+   <dubbo:service interface="com.yh.api.service.DicService" ref="sysService" />
+   <!-- 新闻列表模块service -->
+   <dubbo:service interface="com.yh.api.service.NewsService" ref="newsService" />
+    <!-- 班级列表模块service -->
+   <dubbo:service interface="com.yh.api.service.teacher.CclassService" ref="cclassService" />
+   
+   <!-- 教师请假模块service -->
+   <dubbo:service interface="com.yh.api.service.teacher.LeaveService" ref="leaveService" />
+   
+   <dubbo:service interface="com.yh.api.service.StudentWriteService" ref="stuWriteService" />
+   
+   <!-- 教学笔记模块service -->
+   <dubbo:service interface="com.yh.api.service.teacher.TeacherNotesService" ref="teacherNotesService" />
+   <!-- 学生投稿模块service -->
+   <dubbo:service interface="com.yh.api.service.StudentNewsService" ref="studentNewsService" />
+    
+
+   <!-- 教学日志模块service -->
+   <dubbo:service interface="com.yh.api.service.teacher.TeacherJournalService" ref="teacherJournalService" />
+   
+   <dubbo:service interface="com.yh.api.service.StuVoteService" ref="stuVoteService" />
+</beans>

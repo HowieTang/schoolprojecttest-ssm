@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.PowerMapper" > 
+<!-- Result Map-->
+<resultMap id="BasePowerMap" type="com.yh.model.sys.PowerModel" >
+	<result column="power_id" property="powerId"/>
+	<result column="power_name" property="powerName"/>
+	<result column="create_time" property="createTime"/>
+	<result column="update_time" property="updateTime"/>
+	<result column="flag_del" property="flagDel"/>
+</resultMap>      
+<sql id="Power_Column_List" >
+ 	`power_id`, `power_name`, `create_time`, `update_time`, `flag_del`
+</sql>
+   
+<!-- 查询学生列表-->
+<select id="queryPowerList" resultMap="BasePowerMap">
+	select 
+	<include refid="Power_Column_List"/>
+	from tb_power  
+	where flag_del = 0 
+	<if test="power.powerName != null and power.powerName !=''">
+	   and power_name like concat(concat('%',#{power.powerName}),'%')
+	</if>
+	  limit #{page.pageIndex},#{page.pageSize} 
+</select>
+<select id="queryPowerDataCount" resultType="java.lang.Integer" parameterType="com.yh.model.sys.PowerModel">
+	select 
+ 	count(*) as dataCount 
+ 	from tb_power
+	where flag_del = 0
+	<if test="powerName != null and powerName !=''">
+	  and power_name like concat(concat('%',#{powerName}),'%')
+	</if>
+</select>
+
+<!-- 根据ID删除权限-->
+<update id="deleteById">
+ 	update tb_power set flag_del=1 where power_id=#{powerId}
+ </update>
+ 
+<!-- 根据ID查询权限-->
+<select id="queryPowerById" resultMap="BasePowerMap">
+	select 
+	 <include refid="Power_Column_List"/> 
+	 from tb_power where power_id = #{0}
+</select>
+
+<!-- 添加权限-->
+<insert id="addPower">
+insert into tb_power(<include refid="Power_Column_List"/>) 
+values(#{powerId},#{powerName},#{createTime},#{updateTime},#{flagDel});
+</insert>
+
+<!-- 修改权限-->
+<update id="update">
+update tb_power 
+	<trim prefix="SET" suffixOverrides=",">
+		<if test="powerName !=null and powerName !=''">
+			power_name = #{powerName},
+		</if>
+		<if test="createTime !=null">
+			create_time = #{createTime},
+		</if>
+		<if test="updateTime!=null">
+			update_time = #{updateTime},
+		</if>
+	</trim>
+where power_id=#{powerId}
+</update>
+
+<!--  权限添加菜单接口实现  -->
+<insert id="powerBindMenu">
+insert into tb_power_menu(power_menu_id,power_id,menu_id) 
+values(#{id},#{pid},#{mid});
+</insert>
+
+<!-- 菜单关联权限查询权限列表 -->
+<select id="queryList" resultMap="BasePowerMap" >
+	select
+	<include refid="Power_Column_List"/>
+		from tb_power
+	    where flag_del = 0
+</select>
+
+</mapper>   

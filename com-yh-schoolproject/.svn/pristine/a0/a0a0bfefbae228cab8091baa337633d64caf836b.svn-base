@@ -1,0 +1,226 @@
+ package com.yh.cms.teacher.controller;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.yh.api.service.AccountService;
+import com.yh.api.service.DicService;
+import com.yh.api.service.NewsService;
+import com.yh.api.service.teacher.TeacherNotesService;
+import com.yh.api.service.teacher.TeacherService;
+import com.yh.model.news.NewsModel;
+import com.yh.model.page.PageModel;
+import com.yh.model.sys.AccountModel;
+import com.yh.model.sys.DicModel;
+import com.yh.model.teacher.TeacherModel;
+import com.yh.model.teacher.TeacherNotesModel;
+
+
+/**
+ * 教师笔记控制器
+ * */
+
+@Controller //此注解标识这是一个控制器
+@RequestMapping("/teacherNotes")
+public class TeacherNotesController {
+
+	/*@Autowired
+	private TeacherNotesService teacherNotesService;
+	*/
+	@Autowired
+	private NewsService newsService;
+	
+	@Autowired
+	private DicService dicService;
+	
+	@Autowired
+	private AccountService accountService;
+	
+	/** 查询教学笔记列表  * *//*
+	@RequestMapping("queryTeacherNotesList")
+	public ModelAndView queryTeacherNotesList(PageModel page,TeacherNotesModel teacherNotes){
+		PageModel pages=teacherNotesService.queryTeacherNotesList(page, teacherNotes);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("teacherNotes", teacherNotes);
+		map.put("page", pages);
+		return new ModelAndView("teacher/teacherNotes_list","map",map);
+	}*/
+	/** 查询教学笔记列表  * */
+	@RequestMapping("queryTeacherNotesList")
+	public ModelAndView queryTeacherNotesList(PageModel page,NewsModel newsModel){
+		PageModel pages=newsService.queryTeacherNotesList(page,newsModel);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("newsModel", newsModel);
+		map.put("page", pages);
+		return new ModelAndView("teacher/teacherNotes_list","map",map);
+	}
+	
+
+	/** 教师笔记删除* */
+	/*@RequestMapping("deleteTeacherNotes")
+	public ModelAndView deleteTeacherNotes(PageModel page,TeacherNotesModel teacherNotes){
+		String loginName = teacherNotes.getLoginName();
+		TeacherNotesModel tm = new TeacherNotesModel();
+		tm.setLoginName(loginName);
+		teacherNotesService.deleteTeacherNotes(teacherNotes);
+		return queryTeacherNotesList(page,tm);
+	}*/
+	
+	/** 批量教师笔记删除  * */
+	/*@RequestMapping("/deleteManyTeacherNotesById")
+	public ModelAndView deleteManyTeacherNotesById(PageModel<T> page, TeacherNotesModel teacherNotes) {
+		String arr[] = teacherNotes.getTeacherNotesIds();
+		for(int a = 0;a<arr.length;a++){
+			String xString = arr[a];
+			teacherNotes.setTeacherNotesId(xString);
+			teacherNotesService.deleteTeacherNotes(teacherNotes);
+		}
+		
+		return queryTeacherNotesList(page, new TeacherNotesModel());
+	}*/
+	
+	/** 教师笔记删除* */
+	@RequestMapping("deleteTeacherNotes")
+	public ModelAndView deleteTeacherNotes(PageModel page,NewsModel newsModel){
+		//String loginName = teacherNotes.getLoginName();
+		//TeacherNotesModel tm = new TeacherNotesModel();
+		//tm.setLoginName(loginName);
+		newsService.deleteNewsById(newsModel);
+		return queryTeacherNotesList(page,newsModel);
+	}
+	
+	/** 批量教师笔记删除  * */
+	@RequestMapping("/deleteManyTeacherNotesById")
+	public ModelAndView deleteManyTeacherNotesById(PageModel<T> page, NewsModel newsModel) {
+		String arr[] = newsModel.getNewsids();
+		for(int a = 0;a<arr.length;a++){
+			String xString = arr[a];
+			newsModel.setNews_id(xString);
+			newsService.deleteNewsById(newsModel);
+		}
+		return queryTeacherNotesList(page,newsModel);
+	}
+	
+	
+	/** 教师笔记查看之前* */
+	/*@RequestMapping("bfTeacherNotesLook")
+	public ModelAndView bfTeacherNotesLook(String teacherNotesId){
+		TeacherNotesModel tnm = new TeacherNotesModel();
+		if(StringUtils.isNotEmpty(teacherNotesId)){
+			tnm = teacherNotesService.queryTeacherNotesById(teacherNotesId);
+		
+		}
+		
+		//把byte转换成String类型传值
+		byte [] c =  tnm.getContent();
+		String str = new String(c);
+		tnm.setContents(str);
+		
+		Map<String, Object> resultMap= new HashMap<>();
+		resultMap.put("teacherNotes", tnm);
+		return new ModelAndView("teacher/teacherNotes_listLook","result",resultMap);
+	}
+	*/
+	/** 教师笔记查看* */
+	/*@RequestMapping("teacherNotesLook")
+	public ModelAndView teacherNotesLook(PageModel page,TeacherNotesModel teacherNotes){
+		return queryTeacherNotesList(page,new TeacherNotesModel());
+	}
+	*/
+	/** 教师笔记添加之前* */
+/*	@RequestMapping("bfAdd")
+	public ModelAndView bfAdd(String teacherNotesId,String loginName){
+		TeacherNotesModel tnm = new TeacherNotesModel();
+		if(StringUtils.isNotEmpty(teacherNotesId)){
+			tnm = teacherNotesService.queryTeacherNotesById(teacherNotesId);
+		}
+		
+		//查询出公告类型返回至添加页面
+		List<DicModel> dm = dicService.queryTeacherNotesList();
+		//查询出所有账户返回至添加页面
+		List<AccountModel> am = accountService.queryList();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("loginName",loginName);
+		resultMap.put("teacherNotes", tnm);
+		resultMap.put("dm", dm);
+		resultMap.put("am", am);
+		return new ModelAndView("teacher/teacherNotes_add","result",resultMap);
+		
+	}*/
+	
+	
+	/** 教师笔记添加之前* */
+	@RequestMapping("bfAdd")
+	public ModelAndView bfAdd(String newsId){
+		NewsModel tnm = new NewsModel();
+		if(StringUtils.isNotEmpty(newsId)){
+			tnm = newsService.queryNewsById(newsId);
+		}
+		
+		//查询出公告类型返回至添加页面
+		List<DicModel> dm = dicService.queryTeacherNotesList();
+		//查询出所有账户返回至添加页面
+		List<AccountModel> am = accountService.queryList();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("teacherNotes", tnm);
+		resultMap.put("dm", dm);
+		resultMap.put("am", am);
+		return new ModelAndView("teacher/teacherNotes_add","result",resultMap);
+		
+	}
+	
+	/** 教师笔记添加* */
+	/*@RequestMapping("add")
+	public ModelAndView add(PageModel page,TeacherNotesModel teacherNotes){
+		String loginName= teacherNotes.getLoginName();
+		TeacherNotesModel tm = new TeacherNotesModel();
+		tm.setLoginName(loginName);
+		teacherNotesService.addTeacherNotes(teacherNotes);
+		
+		return queryTeacherNotesList(page,tm);
+	}*/
+	/** 教师笔记添加* */
+	@RequestMapping("add")
+	public ModelAndView add(PageModel page,NewsModel newsModel){
+		newsService.addTeacherNotes(newsModel);
+		
+		return queryTeacherNotesList(page,newsModel);
+	}
+	
+	
+	/** 教师笔记查看之前* */
+	@RequestMapping("bfTeacherNotesLook")
+	public ModelAndView bfTeacherNotesLook(String news_id){
+		NewsModel nm = new NewsModel();
+		if(StringUtils.isNotEmpty(news_id)){
+			nm = newsService.queryNewsById(news_id);
+		
+		}
+		
+		//把byte转换成String类型传值
+		byte [] c =  nm.getContent();
+		String str = new String(c);
+		nm.setContents(str);
+		
+		Map<String, Object> resultMap= new HashMap<>();
+		resultMap.put("teacherNotes", nm);
+		return new ModelAndView("teacher/teacherNotes_listLook","result",resultMap);
+	}
+	
+	/** 教师笔记查看* */
+	@RequestMapping("teacherNotesLook")
+	public ModelAndView teacherNotesLook(PageModel page,NewsModel newsModel){
+		return queryTeacherNotesList(page,newsModel);
+	}
+	
+}

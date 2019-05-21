@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.teacher.LeaveMapper" > 
+<resultMap id="BaseResultMap" type="com.yh.model.teacher.LeaveModel" >
+	<result column="tleave_id" property="tleaveId"/>
+	<result column="type" property="type"/>
+	<result column="tleave_name" property="tleaveName"/>
+	<result column="reason" property="reason"/>
+	<result column="leave_time" property="leaveTime"/>
+	<result column="return_time" property="returnTime"/>
+	<result column="flag_del" property="flagDel"/>
+	<result column="state" property="state"/>
+</resultMap>     
+ 
+<sql id="Base_Column_List" >
+`tleave_id`,`type`, `tleave_name`, `reason`, `leave_time`, `return_time`, `flag_del`, `state`
+</sql>
+   
+<!-- 根据name id 查询列表完成分页 -->
+<select id="queryLeaveList" resultMap="BaseResultMap" >
+	select
+	 <include refid="Base_Column_List"/>
+	from tb_teacher_leave
+	  <where> flag_del = 0
+	    <if test="leave.tleaveId != null and leave.tleaveId !=''">
+	      AND tleave_id=#{leave.tleaveId}
+	    </if>
+	    <if test="leave.leaveTime!=null and leave.leaveTime!=''">
+ 			AND leave_time=#{leave.leaveTime}		
+ 		</if>
+		<if test="leave.returnTime!=null and leave.returnTime!=''">
+			AND return_time=#{leave.returnTime}	
+		</if>
+	    <if test="leave.tleaveName != null and leave.tleaveName != ''">
+	      and tleave_name like concat(concat('%',#{leave.tleaveName}),'%')
+	    </if>
+	     limit #{page.pageIndex},#{page.pageSize} 
+	  </where>
+</select>
+
+<!-- 查询总页数 -->
+<select id="queryDataCount" resultType="java.lang.Integer" >
+ 	select 
+ 	count(*) as dataCount 
+ 	from tb_teacher_leave
+	  <where> flag_del = 0
+	    <if test="tleaveId != null and tleaveId !=''">
+	      AND tleave_id=#{tleaveId}
+	    </if>
+	    <if test="leaveTime!=null and leaveTime!=''">
+	     and leave_time like  concat(concat('%',#{leaveTime}),'%')
+		</if>
+		 <if test="returnTime!=null and returnTime!=''">
+		 and return_time  like  concat(concat('%',#{returnTime}),'%')
+		</if>
+	    <if test="tleaveName != null and tleaveName != ''">
+	      and tleave_name like  concat(concat('%',#{tleaveName}),'%')
+	    </if>
+	    
+	  </where>
+</select>
+
+
+<!-- 根据ID查询公告列表-->
+<select id="queryLeaveById" resultMap="BaseResultMap">
+	select 
+	 <include refid="Base_Column_List"/> 
+	 from tb_teacher_leave where tleave_id = #{0}
+</select>
+<!-- 根据id删除 -->
+<update id="deleteLeaveById">
+	update  tb_teacher_leave set flag_del=1 where tleave_id=#{tleaveId}
+</update>
+<!-- 添加 -->
+<insert id="addLeave">
+	insert into tb_teacher_leave(tleave_id,type,tleave_name,reason,leave_time,return_time,flag_del,state)
+	values(#{tleaveId},#{type},#{tleaveName},#{reason},#{leaveTime},#{returnTime},#{flagDel},#{state})
+</insert>
+<!-- 修改公告-->
+<update id="updataLeave">
+update tb_teacher_leave 
+	<trim prefix="SET" suffixOverrides=",">
+		<if test="tleaveId !=null and tleaveId !=''">
+			tleave_id = #{tleaveId},
+		</if>
+		<if test="type !=null and type !=''">
+			type = #{type},
+		</if>
+		<if test="tleaveName !=null and tleaveName !=''">
+			tleave_name = #{tleaveName},
+		</if>
+		<if test="reason !=null and reason !=''">
+			reason = #{reason},
+		</if>
+		<if test="leaveTime!=null">
+			leave_time = #{leaveTime},
+		</if>
+		<if test="returnTime!=null">
+			return_time = #{returnTime},
+		</if>
+		<if test="state !=null and state !=''">
+			state = #{state},
+		</if>
+	</trim>
+where tleave_id=#{tleaveId}
+</update>
+</mapper>   

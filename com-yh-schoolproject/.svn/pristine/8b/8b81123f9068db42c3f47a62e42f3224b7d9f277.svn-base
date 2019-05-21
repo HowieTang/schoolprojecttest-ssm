@@ -1,0 +1,86 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="../base/base.jsp"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0"/>
+<title></title>
+     <%--    <script type="text/javascript" src="<%=basePath %>static/js/jquery-2.2.1.min.js"></script> --%>
+		<%-- <script type="text/javascript" src="<%=basePath %>static/js/tag.js"></script>
+		<link rel="stylesheet" type="text/css" href="<%=basePath %>static/css/tag.css" /> --%>
+<!-- 富文本编辑器样式 -->
+<style>
+      body {
+          text-align: center;
+      }
+
+      div#editor {
+          width: 81%;
+          margin: auto;
+          text-align: left;
+      }
+  </style>
+</head>
+<body>
+	<div class="x-body">
+		<form class="layui-form" action="<%=basePath%>studentWrite/look" method="post">
+
+		     <input type="hidden" value="${result.stuWrite.writeId}" id="writeId" name="writeId">
+
+			<div class="layui-form-item">
+				<label for="name" class="layui-form-label"> <span
+					class="x-red">*</span>写信人
+				</label>
+				<div class="layui-input-inline">
+					<input style="border: 0px;outline:none;cursor: pointer;" readonly="true"
+						value="${result.stuWrite.letterWriter}" lay-verify="required"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+  
+  
+       <%--   <div class="layui-form-item">
+				<label  class="layui-form-label"> <span
+					class="x-red">*</span>收件老师
+				</label>
+				<div class="layui-input-inline">
+				<select id="teacherId" name="teacherId" checked="添加老师"  >
+					<c:forEach items="${result.teacher}" var="teacher">
+						<option value="${teacher.teacherId}">${teacher.tname}</option>
+					 </c:forEach>
+					</select>
+				</div>
+			</div> --%>
+			
+			   <div class="layui-form-item">
+			           <li><label for="leaveDay" class="layui-form-label"> <span
+								class="x-red">*</span>发送时间
+						</label> </li>
+						 <div class="layui-input-inline"> 
+							<input id="sendTime" name="sendTime"
+							value="${result.stuWrite.sendTime}"
+							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})"
+							 lay-verify="required" autocomplete="off" class="layui-input"  disabled="disabled"/>
+			         </div>
+                   </div>
+			
+			<textarea name="messageContent" id="editor" cols="30" rows="10">${result.stuWrite.messageContents}</textarea>
+
+			 <div class="layui-form-item">
+				<label for="L_repass" class="layui-form-label"> </label>
+				<button class="layui-btn" type="submit">返回</button>
+			</div> 
+
+
+		</form>
+	</div>
+	
+	 
+<!-- 实例化富文本编辑器 -->
+	 <script type="text/javascript">
+		CKEDITOR.replace('messageContent');
+	</script>
+</body>
+</html>

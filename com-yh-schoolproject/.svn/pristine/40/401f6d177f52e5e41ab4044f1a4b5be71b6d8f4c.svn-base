@@ -1,0 +1,43 @@
+#DEBUG < INFO < WARN < ERROR < FATAL 日志输出级别
+log4j.rootLogger=DEBUG,console,file
+
+#控制台输出
+log4j.appender.console=org.apache.log4j.ConsoleAppender
+log4j.appender.console.Threshold=DEBUG
+log4j.appender.console.Encoding=UTF-8
+log4j.appender.console.layout=org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern=[ws] %d %-5p %c(%L) %x - %m%n
+
+#文件输出 
+log4j.appender.file=org.apache.log4j.RollingFileAppender
+log4j.appender.file.Threshold=DEBUG
+log4j.appender.file.File=/home/tomcat/tomcat-ws/logs/cxgwws.log
+log4j.appender.file.Append=false
+log4j.appender.file.Encoding=UTF-8
+log4j.appender.file.MaxFileSize=10MB
+log4j.appender.file.MaxBackupIndex=99999
+log4j.appender.file.layout=org.apache.log4j.PatternLayout
+log4j.appender.file.layout.ConversionPattern=[ws] %d %-5p %c(%L) %x - %m%n
+
+#框架输出
+log4j.logger.org.springframework=INFO
+log4j.logger.org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping=ERROR
+log4j.logger.org.springframework.beans.factory.support.DefaultListableBeanFactory=ERROR
+log4j.logger.org.mybatis=INFO
+log4j.logger.org.jboss=INFO
+log4j.logger.org.apache=INFO
+log4j.logger.com.alibaba=ERROR
+log4j.logger.com.netflix=INFO
+log4j.logger.httpclient=INFO
+log4j.logger.com.cxgw=DEBUG
+log4j.logger.org.apache.zookeeper=ERROR
+log4j.logger.redis.clients=DEBUG
+
+#数据源输出
+log4j.logger.com.ibatis=ERROR
+log4j.logger.com.ibatis.common.jdbc.SimpleDataSource=DEBUG
+log4j.logger.com.ibatis.common.jdbc.ScriptRunner=DEBUG
+log4j.logger.com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate=DEBUG
+log4j.logger.java.sql.Connection=DEBUG
+log4j.logger.java.sql.Statement=DEBUG
+log4j.logger.java.sql.PreparedStatement=DEBUG

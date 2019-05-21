@@ -1,0 +1,219 @@
+package com.yh.cms.news.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.yh.api.service.DicService;
+import com.yh.api.service.NewsService;
+import com.yh.model.news.NewsModel;
+import com.yh.model.page.PageModel;
+import com.yh.model.sys.DicModel;
+/**
+ * 新闻控制器
+ * */
+@Controller //此注解标识这是一个控制器
+@RequestMapping("/news")
+public class NewsController {
+	@Autowired
+	private NewsService newsService;
+	
+	@Autowired
+	private DicService dicService;
+	
+	//新闻列表
+	@RequestMapping("queryNewsList")
+	public ModelAndView queryNewsList(PageModel page,NewsModel newsModel){
+		PageModel pages = newsService.queryNewsList(page,newsModel);
+		Map<String, Object> map = new HashMap<String,Object>();
+		map.put("newsModel", newsModel);
+		map.put("pages", pages);
+		return new ModelAndView("news/news_list","map",map);
+	}
+	
+	//投稿新闻审核列表
+		@RequestMapping("queryNewsFeedList")
+		public ModelAndView queryNewsFeedList(PageModel page,NewsModel newsModel){
+			PageModel pages = newsService.queryNewsFeedList(page, newsModel);
+			Map<String, Object> map = new HashMap<String,Object>();
+			map.put("newsModel", newsModel);
+			map.put("pages", pages);
+			return new ModelAndView("news/newsFeed_list","map",map);
+		}
+	
+	//新闻删除
+	@RequestMapping("delete")
+	public ModelAndView delete(PageModel page,NewsModel newsModel){
+		newsService.deleteNewsById(newsModel);
+		return queryNewsList(page, new NewsModel());
+	}
+	
+	
+	//新闻批量删除
+	@RequestMapping("deleteNewsById")
+	public ModelAndView deleteNewsById(PageModel page,NewsModel newsModel){
+		String arr[] = newsModel.getNewsids();
+		for(int a=0;a<arr.length;a++){
+			String xString = arr[a];
+			newsModel.setNews_id(xString);
+			newsService.deleteNewsById(newsModel);
+		}
+		return queryNewsList(page, new NewsModel());
+	}
+	
+	//新闻添加 修改页面
+	@RequestMapping("bfAddOrUpdate")
+	public ModelAndView bfAddOrUpdate(String news_id){
+		NewsModel news = new NewsModel();
+		if (StringUtils.isNotEmpty(news_id)) {
+			news = newsService.queryNewsById(news_id);
+			//类型转换传值
+			byte [] c =  news.getContent();
+			String str = new String(c);
+			news.setContents(str);
+		}
+			
+		//查询出新闻类型返回到添加页面
+		List<DicModel> dm = dicService.queryNewsType();
+		Map<String, Object> resultMap = new HashMap<String,Object>();
+		resultMap.put("news", news);
+		resultMap.put("dm", dm);
+		return new ModelAndView("news/news_add","result",resultMap);
+	}
+	
+	//新闻添加修改
+	@RequestMapping("addOrUpdate")
+	public ModelAndView addOrUpdate(PageModel page,NewsModel newsModel){
+		if (!StringUtils.isEmpty(newsModel.getNews_id())) {
+			newsService.updateNews(newsModel);
+		}else {
+			newsService.addNews(newsModel);
+		}
+		return queryNewsList(page, new NewsModel());
+	}
+	
+	//查看新闻前
+	@RequestMapping("bfNewsLook")
+	public ModelAndView bfNewsLook(String news_id){
+		NewsModel news = new NewsModel();
+		if (StringUtils.isNotEmpty(news_id)) {
+			news = newsService.queryNewsById(news_id);
+		}
+		
+		//类型转换传值
+		byte [] c =  news.getContent();
+		String str = new String(c);
+		news.setContents(str);
+		
+		Map<String, Object> resultMap = new HashMap<String,Object>();
+		resultMap.put("news", news);
+		return new ModelAndView("news/newslook","result",resultMap);
+	}
+		
+	//新闻查看
+	@RequestMapping("newsLook")
+	public ModelAndView newsLook(PageModel page,NewsModel news){
+		return queryNewsList(page, new NewsModel());
+	}
+	
+	
+	//查看投稿新闻内容前
+	@RequestMapping("bfNewsFeedLook")
+	public ModelAndView bfNewsFeedLook(String news_id){
+		NewsModel news = new NewsModel();
+		if (StringUtils.isNotEmpty(news_id)) {
+			news = newsService.queryNewsById(news_id);
+		}
+		
+		//类型转换传值
+		byte [] c =  news.getContent();
+		String str = new String(c);
+		news.setContents(str);
+		
+		Map<String, Object> resultMap = new HashMap<String,Object>();
+		resultMap.put("news", news);
+		return new ModelAndView("news/newsFeedLook","result",resultMap);
+	}
+	
+	//投稿新闻查看过审
+	@RequestMapping("newsFeedLook")
+	public ModelAndView newsFeedLook(PageModel page,NewsModel news){
+		return queryNewsFeedList(page, new NewsModel());
+	}
+	
+	//投稿新闻审核通过
+	@RequestMapping("updateNewsYes")
+	public ModelAndView updateNewsYes(PageModel page,NewsModel newsModel){
+		newsService.updateNewsYes(newsModel);
+		return queryNewsFeedList(page, new NewsModel());
+	}
+	
+	//投稿新闻审核未通过
+	@RequestMapping("updateNewsNo")
+	public ModelAndView updateNewsNo(PageModel page,NewsModel newsModel){
+		newsService.updateNewsNo(newsModel);
+		return queryNewsFeedList(page, new NewsModel());
+	}
+	
+	//新闻页面渲染
+	@RequestMapping("queryCampusTrends")
+	public ModelAndView queryCampusTrends(){
+		List<NewsModel> news = newsService.queryCampusTrends();
+		List<NewsModel> news2 = newsService.queryCampusFrontier();
+		List<NewsModel> news3 = newsService.queryTeacherNotes();
+		List<NewsModel> news4 = newsService.queryStudentNotes();
+		List<NewsModel> news5 = newsService.queryCampusNotice();
+		List<NewsModel> news6 = newsService.queryCampusGrades();
+
+		List<NewsNoticeModel> news7 = newsService.queryNoticeList();
+
+		List<NewsNoticeModel> news7 = newsService.queryNoticeList();
+
+		Map<String, Object> map = new HashMap<String,Object>();
+		map.put("news", news);
+		map.put("news2", news2);
+		map.put("news3", news3);
+		map.put("news4", news4);
+		map.put("news5", news5);
+		map.put("news6", news6);
+		return new ModelAndView("news/welcome","map",map);
+	}
+	
+	//查看校园新闻热点
+	@RequestMapping("lookCampusTrends")
+	public ModelAndView lookCampusTrends(String news_id){
+		NewsModel newsModel = new NewsModel();
+		newsModel = newsService.queryNewsById(news_id);
+		//类型转换
+		byte [] c =  newsModel.getContent();
+		String str = new String(c);
+		newsModel.setContents(str);
+			
+		Map<String, Object> resultMap = new HashMap<String,Object>();
+		
+		resultMap.put("newsModel", newsModel);
+		return new ModelAndView("news/lookCampusTrends","result",resultMap);
+	}
+	
+	//查询全部校园热点
+	@RequestMapping("AllCampusTrends")
+	public ModelAndView AllCampusTrends(){
+		List<NewsModel> news = newsService.AllCampusTrends();
+		Map<String, Object> map = new HashMap<String,Object>();
+		map.put("news", news);
+		return new ModelAndView("news/AllCampusTrends","map",map);
+	}
+	
+	@RequestMapping("dianzan")
+	public ModelAndView dianZanNum(NewsModel newsModel){
+		newsService.addNumber(newsModel);
+		return new ModelAndView("news/lookCampusTrends");
+	}
+
+}

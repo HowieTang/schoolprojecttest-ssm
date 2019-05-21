@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.StudentNotesMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseResultStuNotesMap" type="com.yh.model.student.StudentNotesModel" >
+	<result column="stu_noteid" property="stuNotesId"/>
+	<result column="stu_notename" property="stuNotesName"/>
+	<result column="stu_notetext" property="stuNotesText"/>
+	<result column="stu_noteovt" property="stuNotesSubt"/>
+	<result column="stu_noteupdt" property="stuNotesUbt"/>
+	<result column="stu_note_news_type" property="stuNewsType"/>
+	
+	
+</resultMap>      
+<sql id="Base_StuNotes_List" >
+`stu_noteid`, `stu_notename`, `stu_notetext`, `stu_noteovt`, `stu_noteupdt`, `stu_note_news_type`
+</sql>
+   
+<!-- 根据id查询楼层-->
+<select id="queryStuNotesList" resultMap="BaseResultStuNotesMap" >
+	select 
+	<include refid="Base_StuNotes_List"/>
+	from tb_student_notes
+	<where>flag_del = 0
+	    <if test="snms.stuNotesId != null and snms.stuNotesId !=''">
+	    and account_id=#{snms.stuNotesId}
+	    </if>
+	    <if test="snms.stuNewsType != null and snms.stuNewsType != ''">
+	      and dic_id like concat(concat('%',#{snms.stuNewsType}),'%')
+	    </if>
+	    
+	     limit #{page.pageIndex},#{page.pageSize}
+	  </where>
+</select>
+
+<!-- 查询数据字典表flag_del为0的数据 -->
+
+</mapper>   

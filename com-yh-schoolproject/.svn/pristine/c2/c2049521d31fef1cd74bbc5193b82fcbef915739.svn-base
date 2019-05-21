@@ -1,0 +1,108 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@include file="../base/base.jsp"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>公告添加修改</title>
+</head>
+ <body>
+    <div class="x-body">
+        <form action="<%=basePath %>cclass/addOrUpdate" method="post" class="layui-form">
+         <input autocomplete="off" class="layui-input" type="hidden" id="formPageNow" name="pageNow" value="${map.page.pageNow }"/>
+		  <input autocomplete="off" class="layui-input" type="hidden" id="formDataCount" value="${map.page.dataCount }"/>
+		  <input type="hidden" id="formPageCount"  value="${map.page.pageCount}"/>
+         <input type="hidden" value="${result.cclass.classId}" id="classId" name="classId"/>
+          <div class="layui-form-item">
+              <label for="name" class="layui-form-label">
+                  <span class="x-red">*</span>班级
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" name="cclass" value="${result.cclass.cclass}" required="" lay-verify="required" autocomplete="off" class="layui-input">
+              </div>
+             
+          </div>
+          <div class="layui-form-item">
+              <label for="leaveDays" class="layui-form-label">
+                  <span class="x-red">*</span>年级
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" value="${result.cclass.grade}" name="grade" required="" lay-verify="required"
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+         <%-- <div class="layui-form-item">
+				<label class="layui-form-label">
+				<span class="x-red">*</span>绑定学生
+				</label>
+				<div class="layui-input-inline">
+				<input  name="student" lay-verify="required" onclick="x_admin_show('学生','<%=basePath %>student/queryNoClassList')"
+                  autocomplete="off" class="layui-input">
+					
+				</div>
+			</div> --%>
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label">
+				<span class="x-red">*</span>
+				添加学生
+				</label>
+			<div class="layui-tab" lay-allowClose="true">
+				  <ul class="layui-tab-title">
+				    <li class="layui-this">网站设置</li>
+				    <li>用户基本管理</li>
+				    <li>权限分配</li>
+				    <li>全部历史商品管理文字长一点试试</li>
+				    <li>订单管理</li> 
+				  </ul>
+				  
+				   <span class="x-red">
+				   <%-- <a id="delPart" class="layui-btn" onclick="x_admin_show('添加老师','<%=basePath %>teacher/queryList')">添加老师</a> --%>
+				   <a id="delPart" class="layui-btn" onclick="x_admin_show('添加学生','<%=basePath %>student/queryNoClassList')">添加学生</a>
+				 </span>
+			</div>
+				
+                <div class="layui-form-item">
+				<label for="L_repass" class="layui-form-label"> <span
+					class="x-red">*</span>添加教师
+				</label>
+				<div class="layui-input-inline">
+				<select id="shipping" name="teacherId" value="${result.cclass.teacherId}" class="valid">
+                    <c:forEach items="${result.teachers}" var="t">
+						<option value="${t.teacherId}"/>${t.tname}</option>
+					 </c:forEach>
+			    </select>
+				</div>
+			</div> 
+			
+         <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">
+              </label>
+              <button  class="layui-btn" type="submit">提交</button>
+          </div>
+      </form>
+    </div>
+   
+  </body>
+ <script>
+
+function tt(dd){
+       //alert(dd);
+   }
+	var GG = {
+	        "kk":function(mm){
+	            
+	            $("#formPageNow").val(mm);
+	            $("#queryForm").submit();
+	        }
+	 }
+	$("#page").initPage($("#formDataCount").val(),$("#formPageNow").val(),GG.kk);
+
+function formSubmit(){
+$("#formPageNow").val(1);
+$("#queryForm").submit();
+}
+</script>
+
+</html>

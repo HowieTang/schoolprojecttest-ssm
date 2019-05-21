@@ -1,0 +1,17 @@
+package com.yh.ws.mapper.teacher;
+
+import java.util.List;
+
+/**
+ * 教师日志增删改查接口
+ * */
+import org.springframework.stereotype.Repository;
+
+import com.yh.model.teacher.TeacherJournalModel;
+
+@Repository
+public interface TeacherJournalMapper {
+	
+	/**教师日志查询列表接口*/
+	public List<TeacherJournalModel> queryteacherJournalList();
+}

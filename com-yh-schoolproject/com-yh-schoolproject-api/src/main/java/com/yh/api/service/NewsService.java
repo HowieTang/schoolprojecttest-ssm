@@ -1,0 +1,79 @@
+package com.yh.api.service;
+
+import java.util.List;
+
+import com.yh.model.news.NewsModel;
+import com.yh.model.news.NewsNoticeModel;
+import com.yh.model.page.PageModel;
+import com.yh.model.teacher.TeacherNotesModel;
+
+/**
+ * 新闻功能接口
+ * */
+public interface NewsService {
+	//查询新闻列表及分页
+	public PageModel queryNewsList(PageModel page,NewsModel newsModel);
+	
+	//新闻删除
+	public void deleteNewsById(NewsModel newsModel);
+	
+	//新闻添加
+	public void addNews(NewsModel newsModel);
+	
+	//新闻修改
+	public void updateNews(NewsModel newsModel);
+	
+	//添加点赞数
+	public void addNumber(NewsModel newsModel);
+	
+	//根据id查询新闻列表接口
+	public NewsModel queryNewsById(String news_id);
+	
+	//新闻投稿列表及分页
+	public PageModel queryNewsFeedList(PageModel page,NewsModel newsModel);
+	
+	//根据id进行新闻过审
+	public void updateNewsYes(NewsModel newsModel);
+	
+	//根据id进行新闻未过审
+	public void updateNewsNo(NewsModel newsModel);
+	
+	//新闻页面渲染 校园热点
+	public List<NewsModel> queryCampusTrends();
+	
+	//新闻页面渲染 校园前沿
+	public List<NewsModel> queryCampusFrontier();
+	
+	//新闻页面渲染 教师笔记
+	public List<NewsModel> queryTeacherNotes();
+	
+	//新闻页面渲染 学生笔记
+	public List<NewsModel> queryStudentNotes();
+	
+	//新闻页面渲染 校园通告
+	public List<NewsModel> queryCampusNotice();
+	
+	//新闻页面渲染 成绩通告
+	public List<NewsModel> queryCampusGrades();
+	
+	//查询全部的校园热点
+	public List<NewsModel> AllCampusTrends();
+	
+	//浏览量加一
+	public void updatePageView(NewsModel newsModel);
+	
+	//公告轮播列表
+	public List<NewsNoticeModel> queryNoticeList();
+	
+	
+	
+	/**教师笔记列表接口 * */
+	public PageModel queryTeacherNotesList(PageModel page,NewsModel newsModel);
+	
+	/** 教师笔记添加接口 * */
+	public void addTeacherNotes(NewsModel newsModel);
+	
+	/** 教师笔记删除接口 * */
+	/*public void deleteTeacherNotes(NewsModel newsModel);*/
+	
+}

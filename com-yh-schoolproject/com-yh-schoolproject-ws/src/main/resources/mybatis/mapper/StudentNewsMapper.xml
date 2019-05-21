@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yh.ws.mapper.StudentNewsMapper" > 
+<!-- Result Map-->
+<resultMap id="BaseResultStuNewsMap" type="com.yh.model.student.StudentNewsModel" >
+	<result column="news_id" property="stuNewsId"/>
+	<result column="dic_id" property="stuNewsType"/>
+	<result column="news_title" property="newsName"/>
+	<result column="create_time" property="subTime"/>
+	<result column="content" property="newsText"/>
+	<result column="state" property="state"/>
+	<result column="account_id" property="accountId"/>
+	<result column="type" property="stuNewsType"/>
+	
+</resultMap>      
+<sql id="Base_StuNews_List" >
+`news_id`, `dic_id`, `news_title`, `create_time`, `content`, `state`, `account_id`
+</sql>
+   
+<!-- 根据id查询楼层-->
+<select id="queryStuNewsList" resultMap="BaseResultStuNewsMap" >
+	select 
+	<include refid="Base_StuNews_List"/>
+	from tb_news
+	<where>flag_del = 0
+	    <if test="snms.accountId != null and snms.accountId !=''">
+	    and account_id=#{snms.accountId}
+	    </if>
+	   
+	    <if test="snms.stuNewsType != null and snms.stuNewsType != ''">
+	      and dic_id like concat(concat('%',#{snms.stuNewsType}),'%')
+	    </if>
+	    
+	     limit #{page.pageIndex},#{page.pageSize} 
+	  </where>
+</select>
+
+<!-- 查询数据字典表flag_del为0的数据 -->
+
+ <select id="queryStuNewsDataCount" resultType="java.lang.Integer" >
+ 	select 
+ 	count(*) as dataCount 
+ 	from tb_news
+	  <where> flag_del = 0
+	    <if test=" accountId != null and accountId !=''">
+	     AND account_id =#{accountId}
+	    </if>
+	    <if test="stuNewsType != null and stuNewsType != ''">
+	      and dic_id like  concat(concat('%',#{stuNewsType}),'%')
+	    </if>
+	  </where>
+</select>
+
+</mapper>   
